@@ -38,12 +38,12 @@ class _ProjectCardState extends State<ProjectCard> {
     'Movie App': [
       '10-movies-1',
       '7-32-movies-home',
-      '8-33-movies-search',
+      '1-movies-search-clean',
       '9-34-movies-browse',
     ],
     'Evently': ['14-evently-1', '10-35-evently-home', '11-36-evently-favorites'],
     'News App': ['17-news-1', '18-news-2'],
-    'Islami App': ['1-islami-clean-1', '2-islami-clean-2', '3-islami-clean-3', '4-islami-clean-4'],
+    'Islami App': ['19-islami-1', '20-islami-2', '21-islami-3', '22-islami-4'],
   };
 
   /// Projects whose gallery screens were captured with seeded demo data
