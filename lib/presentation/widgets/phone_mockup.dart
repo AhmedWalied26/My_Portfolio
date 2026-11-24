@@ -17,23 +17,52 @@ class PhoneMockup extends StatelessWidget {
 
   static const double _aspect = 390 / 844;
 
-  // Match the safe area to the upper edge of each existing app capture.
-  // No screenshot assets are edited or stretched to make room for the island.
-  Color get _safeAreaColor {
+  // The safe area above each capture continues the capture's own top edge:
+  // the top pixel row is stretched upward, so the colour (including gradients)
+  // always matches the app bar and no seam can show at the join.
+  // Captures whose first row is busy artwork (posters, search field) use a
+  // flat colour instead.
+  Color? get _flatColor {
     final name = assetPath.split('/').last;
-    const exact = <String, int>{"1-26-mazra3ty-home.webp": 0xFF195130, "2-2-27-mazra3ty-collections.webp": 0xFF195130, "3-28-mazra3ty-outgoings.webp": 0xFF195130, "4-29-mazra3ty-history.webp": 0xFF195130, "1-61-package-nodata.webp": 0xFFF8F9FF, "2-62-package-search.webp": 0xFFF8F9FF, "3-63-package-nointernet.webp": 0xFFF8F9FF, "4-64-package-error.webp": 0xFFF8F9FF, "5-65-package-permission.webp": 0xFFF8F9FF, "5-30-ecommerce-home.webp": 0xFFFFFFFF, "6-31-ecommerce-products.webp": 0xFFFFFFFF, "7-32-movies-home.webp": 0xFF000000, "1-movies-search-clean.webp": 0xFF303435, "19-islami-1.webp": 0xFF1F1F1F, "20-islami-2.webp": 0xFF181818, "21-islami-3.webp": 0xFF483A2A, "22-islami-4.webp": 0xFF161616};
-    final exactColor = exact[name];
-    if (exactColor != null) return Color(exactColor);
-    if (name.contains('package')) return const Color(0xFFF6F8FE);
-    if (name.startsWith('4-mazra3ty')) return const Color(0xFF195130);
-    if (name.contains('mazra3ty')) return const Color(0xFFF5F8F5);
-    if (name.contains('ecommerce')) return const Color(0xFF014282);
-    if (name.contains('evently')) return const Color(0xFFF4F7FF);
-    if (name.contains('news')) return Colors.white;
-    if (name.contains('movies')) return const Color(0xFF131313);
-    if (name.contains('islami')) return const Color(0xFF211F1D);
-    return const Color(0xFF151515);
+    const flat = <String, int>{
+      '10-movies-1.webp': 0xFF050505,
+      '5-30-ecommerce-home.webp': 0xFFFFFFFF,
+      '6-31-ecommerce-products.webp': 0xFFFFFFFF,
+      '7-32-movies-home.webp': 0xFF000000,
+      '8-33-movies-search.webp': 0xFF131313,
+      '9-34-movies-browse.webp': 0xFF131313,
+    };
+    final c = flat[name];
+    return c == null ? null : Color(c);
   }
+
+  Widget _safeAreaFill(double safeArea, double screenWidth, double imageHeight) {
+    final flat = _flatColor;
+    if (flat != null) return ColoredBox(color: flat);
+    // Captures are 420x909 (or 780x1688): one pixel row is ~1/900 of the height.
+    final rowHeight = imageHeight / 900;
+    final scaleY = (safeArea / rowHeight) * 1.5;
+    return ClipRect(
+      child: OverflowBox(
+        alignment: Alignment.topCenter,
+        minHeight: 0,
+        maxHeight: double.infinity,
+        child: Transform(
+          alignment: Alignment.topCenter,
+          transform: Matrix4.diagonal3Values(1, scaleY, 1),
+          child: Image.asset(
+            assetPath,
+            width: screenWidth,
+            height: imageHeight,
+            fit: BoxFit.fill,
+            filterQuality: FilterQuality.none,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color get _backColor => _flatColor ?? const Color(0xFF090A0C);
 
   @override
   Widget build(BuildContext context) {
@@ -67,13 +96,38 @@ class PhoneMockup extends StatelessWidget {
           padding: EdgeInsets.all(bezel),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(screenRadius),
-            child: ColoredBox(color: _safeAreaColor, child: Column(
-              children: [
-                SizedBox(
-                  height: safeArea,
-                  width: screenWidth,
-                  child: ColoredBox(
-                    color: _safeAreaColor,
+            child: ColoredBox(
+              color: _backColor,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: safeArea + 1,
+                    child: _safeAreaFill(safeArea + 1, screenWidth, imageHeight),
+                  ),
+                  // The capture starts 1px inside the safe area, so the join
+                  // can never show a gap, even on tilted phones.
+                  Positioned(
+                    top: safeArea - 1,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Image.asset(
+                      assetPath,
+                      width: screenWidth,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.topCenter,
+                      semanticLabel: semanticLabel,
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: safeArea,
                     child: Align(
                       alignment: const Alignment(0, -0.05),
                       child: Container(
@@ -86,17 +140,9 @@ class PhoneMockup extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Image.asset(
-                    assetPath,
-                    width: screenWidth,
-                    fit: BoxFit.contain,
-                    semanticLabel: semanticLabel,
-                  ),
-                ),
-              ],
-            )),
+                ],
+              ),
+            ),
           ),
         ),
       ),
