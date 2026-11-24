@@ -7,6 +7,8 @@ import '../../../core/utils/download_helper.dart';
 import '../../controllers/navigation_controller.dart';
 import '../../widgets/animated_reveal.dart';
 import '../../widgets/modern_button.dart';
+import '../../widgets/portrait_frame.dart';
+import '../../widgets/typing_name_text.dart';
 
 class HeroSection extends StatelessWidget {
   final NavigationController navController;
@@ -49,16 +51,10 @@ class HeroSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 9),
-        Text.rich(
-          TextSpan(
-            children: [
-              const TextSpan(text: 'Ahmed Walied\n'),
-              TextSpan(
-                text: 'Hassan.',
-                style: TextStyle(color: AppColors.primary),
-              ),
-            ],
-          ),
+        TypingNameText(
+          text: 'Ahmed Walied\nHassan.',
+          suffix: 'Hassan.',
+          suffixColor: AppColors.primary,
           style: GoogleFonts.outfit(
             fontSize: wide ? 64 : 42,
             fontWeight: FontWeight.w700,
@@ -118,14 +114,16 @@ class HeroSection extends StatelessWidget {
         ),
       ],
     );
-    final portrait = ClipRRect(
-      borderRadius: BorderRadius.circular(wide ? 24 : 16),
-      child: Image.asset(
-        'images/2-portrait.webp',
-        width: wide ? 315 : 112,
-        height: wide ? 390 : 145,
-        fit: BoxFit.cover,
-        semanticLabel: 'Ahmed Walied Hassan',
+    final portrait = PortraitFrame(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(wide ? 24 : 16),
+        child: Image.asset(
+          'images/2-portrait.webp',
+          width: wide ? 315 : 112,
+          height: wide ? 390 : 145,
+          fit: BoxFit.cover,
+          semanticLabel: 'Ahmed Walied Hassan',
+        ),
       ),
     );
     final visual = wide
