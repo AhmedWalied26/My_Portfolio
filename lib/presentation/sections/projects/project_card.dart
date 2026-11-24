@@ -16,7 +16,12 @@ class ProjectCard extends StatefulWidget {
 class _ProjectCardState extends State<ProjectCard> {
   bool hover = false;
   static const screens = {
-    'Mazra3ty': ['1-mazra3ty-1', '2-mazra3ty-2', '3-mazra3ty-3', '4-mazra3ty-4'],
+    'Mazra3ty': [
+      '1-mazra3ty-1',
+      '2-mazra3ty-2',
+      '3-mazra3ty-3',
+      '4-mazra3ty-4',
+    ],
     'smart_empty_state': ['1-23-package-1', '2-24-package-2', '3-25-package-3'],
     'E-Commerce App': ['8-ecommerce-1', '9-ecommerce-2'],
     'Movie App': ['10-movies-1', '11-movies-2', '12-movies-3', '13-movies-4'],
@@ -89,15 +94,22 @@ class _ProjectCardState extends State<ProjectCard> {
   Widget build(BuildContext context) {
     final p = widget.project;
     final reduced = MediaQuery.disableAnimationsOf(context);
+    final active = hover && !reduced;
     return MouseRegion(
       onEnter: (_) => setState(() => hover = true),
       onExit: (_) => setState(() => hover = false),
       child: AnimatedContainer(
         duration: Duration(milliseconds: reduced ? 0 : 180),
-        transform: Matrix4.translationValues(0, hover && !reduced ? -4 : 0, 0),
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.surface,
+          boxShadow: [
+            BoxShadow(
+              color: p.accentColor.withValues(alpha: active ? .18 : 0),
+              blurRadius: active ? 26 : 0,
+              offset: const Offset(0, 10),
+            ),
+          ],
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: hover
@@ -132,50 +144,70 @@ class _ProjectCardState extends State<ProjectCard> {
                           builder: (context, constraints) {
                             final assets = _assets;
                             final shown = assets.take(3).toList();
-                            final spread =
-                                (constraints.maxWidth * 0.24)
-                                    .clamp(70.0, 130.0);
+                            final spread = (constraints.maxWidth * 0.24).clamp(
+                              70.0,
+                              130.0,
+                            );
                             // Draw side phones first so the center phone
                             // of an odd fan sits on top.
-                            final order = [
-                              for (var i = 0; i < shown.length; i++) i,
-                            ]..sort(
-                                (a, b) =>
-                                    (b - (shown.length - 1) / 2)
+                            final order =
+                                [for (var i = 0; i < shown.length; i++) i]
+                                  ..sort(
+                                    (a, b) => (b - (shown.length - 1) / 2)
                                         .abs()
                                         .compareTo(
                                           (a - (shown.length - 1) / 2).abs(),
                                         ),
-                              );
-                            return Stack(
-                              alignment: Alignment.center,
-                              clipBehavior: Clip.none,
-                              children: [
-                              for (final i in order)
-                                Transform.translate(
-                                  offset: Offset(
-                                    (i - (shown.length - 1) / 2) * spread,
-                                    i == (shown.length - 1) ~/ 2 &&
-                                            shown.length.isOdd
-                                        ? -4
-                                        : 14,
-                                  ),
-                                  child: Transform.rotate(
-                                    angle: shown.length == 1
-                                        ? 0
-                                        : (i - (shown.length - 1) / 2) * 0.13,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 18),
-                                      child: PhoneMockup(
-                                        assetPath: shown[i],
-                                        height: shown.length == 1 ? 236 : 210,
-                                        semanticLabel:
-                                            '${p.title}: actual app screenshot ${i + 1}',
+                                  );
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(end: active ? 1 : 0),
+                              duration: Duration(
+                                milliseconds: reduced ? 0 : 320,
+                              ),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, motion, _) => Transform.scale(
+                                scale: 1 + motion * .025,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    for (final i in order)
+                                      Transform.translate(
+                                        offset: Offset(
+                                          (i - (shown.length - 1) / 2) *
+                                              (spread + motion * 5),
+                                          (i == (shown.length - 1) ~/ 2 &&
+                                                      shown.length.isOdd
+                                                  ? -4.0
+                                                  : 14.0) -
+                                              motion *
+                                                  (i == (shown.length - 1) ~/ 2
+                                                      ? 7
+                                                      : 3),
+                                        ),
+                                        child: Transform.rotate(
+                                          angle: shown.length == 1
+                                              ? 0
+                                              : (i - (shown.length - 1) / 2) *
+                                                    (.13 + motion * .025),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 18,
+                                            ),
+                                            child: PhoneMockup(
+                                              assetPath: shown[i],
+                                              height: shown.length == 1
+                                                  ? 236
+                                                  : 210,
+                                              semanticLabel:
+                                                  '${p.title}: actual app screenshot ${i + 1}',
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             );
                           },
                         ),
