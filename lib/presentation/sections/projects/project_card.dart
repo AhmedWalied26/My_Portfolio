@@ -17,7 +17,7 @@ class _ProjectCardState extends State<ProjectCard> {
   bool hover = false;
   static const screens = {
     'Mazra3ty': ['1-mazra3ty-1', '2-mazra3ty-2', '3-mazra3ty-3', '4-mazra3ty-4'],
-    'smart_empty_state': ['5-package-1', '6-package-2', '7-package-3'],
+    'smart_empty_state': ['1-23-package-1', '2-24-package-2', '3-25-package-3'],
     'E-Commerce App': ['8-ecommerce-1', '9-ecommerce-2'],
     'Movie App': ['10-movies-1', '11-movies-2', '12-movies-3', '13-movies-4'],
     'Evently': ['14-evently-1', '15-evently-2', '16-evently-3'],
@@ -135,11 +135,23 @@ class _ProjectCardState extends State<ProjectCard> {
                             final spread =
                                 (constraints.maxWidth * 0.24)
                                     .clamp(70.0, 130.0);
+                            // Draw side phones first so the center phone
+                            // of an odd fan sits on top.
+                            final order = [
+                              for (var i = 0; i < shown.length; i++) i,
+                            ]..sort(
+                                (a, b) =>
+                                    (b - (shown.length - 1) / 2)
+                                        .abs()
+                                        .compareTo(
+                                          (a - (shown.length - 1) / 2).abs(),
+                                        ),
+                              );
                             return Stack(
                               alignment: Alignment.center,
                               clipBehavior: Clip.none,
                               children: [
-                              for (var i = 0; i < shown.length; i++)
+                              for (final i in order)
                                 Transform.translate(
                                   offset: Offset(
                                     (i - (shown.length - 1) / 2) * spread,
