@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 /// Draws an app screenshot inside a stylized phone frame
 /// (dark bezel, rounded corners, notch).
+///
+/// The inner screen area is sized to the exact aspect ratio of the
+/// source captures ([_aspect]), so `BoxFit.cover` renders every
+/// screenshot pixel-perfect with no cropping of edge content, and the
+/// notch sits inside the top bezel instead of covering screen content.
 class PhoneMockup extends StatelessWidget {
   final String assetPath;
   final double height;
@@ -20,6 +25,18 @@ class PhoneMockup extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = height * _aspect;
     final outerRadius = height * 0.085;
+
+    // Thin side bezels and a slightly thicker top/bottom bezel chosen so
+    // the remaining screen area matches the screenshot aspect exactly.
+    final sidePad = height * 0.012;
+    final screenWidth = width - 2 * sidePad;
+    final screenHeight = screenWidth / _aspect;
+    final verticalPad = (height - screenHeight) / 2;
+    final screenRadius = outerRadius - sidePad;
+
+    final notchHeight = verticalPad * 0.72;
+    final notchWidth = width * 0.30;
+
     return Container(
       width: width,
       height: height,
@@ -37,30 +54,31 @@ class PhoneMockup extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned.fill(
-            child: Padding(
-              padding: EdgeInsets.all(height * 0.018),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(outerRadius * 0.78),
-                child: Image.asset(
-                  assetPath,
-                  fit: BoxFit.cover,
-                  semanticLabel: semanticLabel,
-                ),
+          Positioned(
+            top: verticalPad,
+            bottom: verticalPad,
+            left: sidePad,
+            right: sidePad,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(screenRadius),
+              child: Image.asset(
+                assetPath,
+                fit: BoxFit.cover,
+                semanticLabel: semanticLabel,
               ),
             ),
           ),
           Positioned(
-            top: height * 0.018,
+            top: (verticalPad - notchHeight) / 2,
             left: 0,
             right: 0,
             child: Center(
               child: Container(
-                width: width * 0.30,
-                height: height * 0.026,
+                width: notchWidth,
+                height: notchHeight,
                 decoration: BoxDecoration(
                   color: const Color(0xFF0B0F19),
-                  borderRadius: BorderRadius.circular(height * 0.013),
+                  borderRadius: BorderRadius.circular(notchHeight / 2),
                 ),
               ),
             ),
