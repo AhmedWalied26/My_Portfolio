@@ -263,6 +263,29 @@ class _ProjectCardState extends State<ProjectCard> {
                           ),
                         ),
                       ),
+                      if (demoDataProjects.contains(p.title))
+                        Positioned(
+                          left: 16,
+                          bottom: 14,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 9,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.background.withValues(alpha: .9),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Interior screens: demo data',
+                              style: GoogleFonts.inter(
+                                fontSize: 9,
+                                fontStyle: FontStyle.italic,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
                       const Positioned(
                         right: 14,
                         bottom: 14,
