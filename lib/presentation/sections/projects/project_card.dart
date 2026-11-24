@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/url_launcher_helper.dart';
 import '../../../data/models/portfolio_models.dart';
+import '../../widgets/phone_mockup.dart';
 
 class ProjectCard extends StatefulWidget {
   final ProjectModel project;
@@ -14,42 +15,71 @@ class ProjectCard extends StatefulWidget {
 
 class _ProjectCardState extends State<ProjectCard> {
   bool hover = false;
-  static const media = {
-    'Mazra3ty': '3-mazra3ty',
-    'smart_empty_state': '4-package',
-    'E-Commerce App': '5-ecommerce',
-    'Movie App': '6-movies',
-    'Evently': '7-evently',
-    'News App': '8-news',
-    'Islami App': '9-islami',
+  static const screens = {
+    'Mazra3ty': ['1-mazra3ty-1', '2-mazra3ty-2', '3-mazra3ty-3', '4-mazra3ty-4'],
+    'smart_empty_state': ['5-package-1', '6-package-2', '7-package-3'],
+    'E-Commerce App': ['8-ecommerce-1', '9-ecommerce-2'],
+    'Movie App': ['10-movies-1', '11-movies-2', '12-movies-3', '13-movies-4'],
+    'Evently': ['14-evently-1', '15-evently-2', '16-evently-3'],
+    'News App': ['17-news-1', '18-news-2'],
+    'Islami App': ['19-islami-1', '20-islami-2', '21-islami-3', '22-islami-4'],
   };
-  void openImage() {
+
+  List<String> get _assets =>
+      (screens[widget.project.title] ?? const <String>[])
+          .map((name) => 'images/$name.webp')
+          .toList();
+  void openGallery() {
+    final assets = _assets;
     showDialog(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: AppColors.surface,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: InteractiveViewer(
-                child: Image.asset(
-                  'images/${media[widget.project.title]}.webp',
-                  fit: BoxFit.contain,
-                  semanticLabel: '${widget.project.title} app screen',
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 900),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 56, 24, 32),
+                child: SizedBox(
+                  height: 520,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: assets.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 28),
+                    itemBuilder: (context, index) => Center(
+                      child: PhoneMockup(
+                        assetPath: assets[index],
+                        height: 470,
+                        semanticLabel:
+                            '${widget.project.title} app screen ${index + 1} of ${assets.length}',
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: IconButton(
-                tooltip: 'Close image',
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, color: Colors.white),
+              Positioned(
+                top: 12,
+                left: 24,
+                child: Text(
+                  '${widget.project.title} · ${assets.length} screens',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ),
-            ),
-          ],
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  tooltip: 'Close gallery',
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -80,9 +110,9 @@ class _ProjectCardState extends State<ProjectCard> {
           children: [
             Semantics(
               button: true,
-              label: 'Enlarge ${p.title} screenshot',
+              label: 'Open ${p.title} screen gallery',
               child: InkWell(
-                onTap: openImage,
+                onTap: openGallery,
                 child: Container(
                   height: 280,
                   width: double.infinity,
@@ -97,28 +127,45 @@ class _ProjectCardState extends State<ProjectCard> {
                   ),
                   child: Stack(
                     children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 22, bottom: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black38,
-                                  blurRadius: 25,
-                                  offset: Offset(0, 12),
+                      Positioned.fill(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final assets = _assets;
+                            final shown = assets.take(3).toList();
+                            final spread =
+                                (constraints.maxWidth * 0.24)
+                                    .clamp(70.0, 130.0);
+                            return Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                              for (var i = 0; i < shown.length; i++)
+                                Transform.translate(
+                                  offset: Offset(
+                                    (i - (shown.length - 1) / 2) * spread,
+                                    i == (shown.length - 1) ~/ 2 &&
+                                            shown.length.isOdd
+                                        ? -4
+                                        : 14,
+                                  ),
+                                  child: Transform.rotate(
+                                    angle: shown.length == 1
+                                        ? 0
+                                        : (i - (shown.length - 1) / 2) * 0.13,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 18),
+                                      child: PhoneMockup(
+                                        assetPath: shown[i],
+                                        height: shown.length == 1 ? 236 : 210,
+                                        semanticLabel:
+                                            '${p.title}: actual app screenshot ${i + 1}',
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Image.asset(
-                              'images/${media[p.title]}.webp',
-                              fit: BoxFit.contain,
-                              semanticLabel:
-                                  '${p.title}: actual app screenshot',
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ),
                       Positioned(
