@@ -24,11 +24,11 @@ class _ProjectCardState extends State<ProjectCard> {
       '4-29-mazra3ty-history',
     ],
     'smart_empty_state': [
-      '1-40-package-nodata',
-      '2-41-package-search',
-      '3-42-package-nointernet',
-      '4-43-package-error',
-      '5-44-package-permission',
+      '1-61-package-nodata',
+      '2-62-package-search',
+      '3-63-package-nointernet',
+      '4-64-package-error',
+      '5-65-package-permission',
     ],
     'E-Commerce App': [
       '8-ecommerce-1',
