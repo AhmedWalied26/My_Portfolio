@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 /// Draws an app screenshot inside a stylized phone frame
-/// (dark bezel, rounded corners, notch).
+/// (dark bezel, rounded corners, visible top notch).
 ///
 /// The inner screen area is sized to the exact aspect ratio of the
 /// source captures ([_aspect]), so `BoxFit.cover` renders every
-/// screenshot pixel-perfect with no cropping of edge content, and the
-/// notch sits inside the top bezel instead of covering screen content.
+/// screenshot pixel-perfect with no cropping of edge content. The
+/// notch sits entirely inside a dedicated top bezel band, so it is
+/// clearly visible while never covering any pixel of the screenshot.
 class PhoneMockup extends StatelessWidget {
   final String assetPath;
   final double height;
@@ -23,19 +24,20 @@ class PhoneMockup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = height * _aspect;
-    final outerRadius = height * 0.085;
+    // Bezel proportions: thin sides, a slim chin, and a taller top band
+    // that hosts the notch. The remaining screen area keeps the exact
+    // capture aspect, so the screenshot is never cropped or letterboxed.
+    final sidePad = height * 0.014;
+    final topPad = height * 0.052;
+    final bottomPad = height * 0.018;
+    final screenWidth = (height - topPad - bottomPad) * _aspect;
+    final width = screenWidth + 2 * sidePad;
 
-    // Thin side bezels and a slightly thicker top/bottom bezel chosen so
-    // the remaining screen area matches the screenshot aspect exactly.
-    final sidePad = height * 0.012;
-    final screenWidth = width - 2 * sidePad;
-    final screenHeight = screenWidth / _aspect;
-    final verticalPad = (height - screenHeight) / 2;
-    final screenRadius = outerRadius - sidePad;
+    final outerRadius = height * 0.075;
+    final screenRadius = (outerRadius - sidePad).clamp(0.0, outerRadius);
 
-    final notchHeight = verticalPad * 0.72;
-    final notchWidth = width * 0.30;
+    final notchHeight = topPad * 0.52;
+    final notchWidth = screenWidth * 0.46;
 
     return Container(
       width: width,
@@ -55,8 +57,8 @@ class PhoneMockup extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: verticalPad,
-            bottom: verticalPad,
+            top: topPad,
+            bottom: bottomPad,
             left: sidePad,
             right: sidePad,
             child: ClipRRect(
@@ -68,8 +70,11 @@ class PhoneMockup extends StatelessWidget {
               ),
             ),
           ),
+          // Notch: centered in the top bezel band, lifted from the bezel
+          // by a slightly lighter fill and a hairline border so it reads
+          // as a real phone notch at any mockup size.
           Positioned(
-            top: (verticalPad - notchHeight) / 2,
+            top: (topPad - notchHeight) / 2,
             left: 0,
             right: 0,
             child: Center(
@@ -77,8 +82,12 @@ class PhoneMockup extends StatelessWidget {
                 width: notchWidth,
                 height: notchHeight,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0B0F19),
+                  color: const Color(0xFF1B2536),
                   borderRadius: BorderRadius.circular(notchHeight / 2),
+                  border: Border.all(
+                    color: const Color(0xFF2A3B4A),
+                    width: 1,
+                  ),
                 ),
               ),
             ),
