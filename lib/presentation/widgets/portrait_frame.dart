@@ -160,7 +160,7 @@ class _InfoCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
-              Icons.verified_rounded,
+              Icons.phone_iphone_rounded,
               size: compact ? 11 : 16,
               color: accent,
             ),
@@ -171,7 +171,7 @@ class _InfoCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Open Source Author',
+                'Building mobile apps',
                 style: GoogleFonts.inter(
                   fontSize: compact ? 8.5 : 12,
                   fontWeight: FontWeight.w600,
@@ -179,7 +179,7 @@ class _InfoCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'smart_empty_state on pub.dev',
+                'Flutter · Dart · Kotlin',
                 style: GoogleFonts.inter(
                   fontSize: compact ? 7 : 10,
                   color: AppColors.textMuted,
