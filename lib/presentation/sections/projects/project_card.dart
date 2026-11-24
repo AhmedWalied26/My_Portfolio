@@ -19,7 +19,7 @@ class _ProjectCardState extends State<ProjectCard> {
     'Mazra3ty': [
       '1-mazra3ty-1',
       '1-26-mazra3ty-home',
-      '2-27-mazra3ty-collections',
+      '2-2-27-mazra3ty-collections',
       '3-28-mazra3ty-outgoings',
       '4-29-mazra3ty-history',
     ],
