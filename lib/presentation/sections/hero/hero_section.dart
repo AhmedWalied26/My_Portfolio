@@ -116,6 +116,7 @@ class HeroSection extends StatelessWidget {
     );
     final portrait = PortraitFrame(
       borderRadius: wide ? 24 : 16,
+      compact: !wide,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(wide ? 24 : 16),
         child: Image.asset(
