@@ -26,6 +26,9 @@ class PhoneMockup extends StatelessWidget {
     final name = assetPath.split('/').last;
     const flat = <String, int>{
       '10-movies-1.webp': 0xFF050505,
+      '19-islami-1.webp': 0xFF1F1F1F,
+      '20-islami-2.webp': 0xFF181818,
+      '22-islami-4.webp': 0xFF161616,
       '5-30-ecommerce-home.webp': 0xFFFFFFFF,
       '6-31-ecommerce-products.webp': 0xFFFFFFFF,
       '7-32-movies-home.webp': 0xFF000000,
