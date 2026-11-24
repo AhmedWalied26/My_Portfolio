@@ -51,10 +51,16 @@ class HeroSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 9),
-        TypingNameText(
-          text: 'Ahmed Walied\nHassan.',
-          suffix: 'Hassan.',
-          suffixColor: AppColors.primary,
+        Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(text: 'Ahmed Walied\n'),
+              TextSpan(
+                text: 'Hassan.',
+                style: TextStyle(color: AppColors.primary),
+              ),
+            ],
+          ),
           style: GoogleFonts.outfit(
             fontSize: wide ? 64 : 42,
             fontWeight: FontWeight.w700,
@@ -63,8 +69,10 @@ class HeroSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        Text(
-          AppStrings.title,
+        TypingNameText(
+          text: AppStrings.title,
+          suffix: 'Developer',
+          suffixColor: AppColors.primary,
           style: GoogleFonts.outfit(
             fontSize: wide ? 26 : 22,
             fontWeight: FontWeight.w600,
