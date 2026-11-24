@@ -23,7 +23,13 @@ class _ProjectCardState extends State<ProjectCard> {
       '3-28-mazra3ty-outgoings',
       '4-29-mazra3ty-history',
     ],
-    'smart_empty_state': ['1-23-package-1', '2-24-package-2', '3-25-package-3'],
+    'smart_empty_state': [
+      '1-40-package-nodata',
+      '2-41-package-search',
+      '3-42-package-nointernet',
+      '4-43-package-error',
+      '5-44-package-permission',
+    ],
     'E-Commerce App': [
       '8-ecommerce-1',
       '5-30-ecommerce-home',
@@ -360,40 +366,9 @@ class _ProjectCardState extends State<ProjectCard> {
                         .toList(),
                   ),
                   const SizedBox(height: 14),
-                  Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: ExpansionTile(
-                        tilePadding: EdgeInsets.zero,
-                        childrenPadding: const EdgeInsets.only(bottom: 12),
-                        iconColor: AppColors.textSecondary,
-                        collapsedIconColor: AppColors.textSecondary,
-                        title: Text(
-                          'Engineering details',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        children: p.highlights
-                            .map(
-                              (t) => Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  '• $t',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12,
-                                    height: 1.7,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
+                  _EngineeringDetails(
+                    accent: p.accentColor,
+                    highlights: p.highlights,
                   ),
                   if (p.externalUrl != null)
                     TextButton.icon(
@@ -403,6 +378,133 @@ class _ProjectCardState extends State<ProjectCard> {
                     ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Expandable "Engineering details" row with a clear hover state: the row
+/// gets an accent tint and border, the label brightens and the chevron
+/// turns toward the open position.
+class _EngineeringDetails extends StatefulWidget {
+  final Color accent;
+  final List<String> highlights;
+  const _EngineeringDetails({required this.accent, required this.highlights});
+
+  @override
+  State<_EngineeringDetails> createState() => _EngineeringDetailsState();
+}
+
+class _EngineeringDetailsState extends State<_EngineeringDetails> {
+  bool _hover = false;
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final reduced = MediaQuery.disableAnimationsOf(context);
+    final dur = Duration(milliseconds: reduced ? 0 : 180);
+    final lit = _hover || _open;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: AnimatedContainer(
+        duration: dur,
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: widget.accent.withValues(alpha: _hover ? .14 : (_open ? .08 : 0)),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: lit
+                ? widget.accent.withValues(alpha: _hover ? .7 : .4)
+                : AppColors.border,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              onEnter: (_) => setState(() => _hover = true),
+              onExit: (_) => setState(() => _hover = false),
+              child: Semantics(
+                button: true,
+                expanded: _open,
+                label: 'Engineering details',
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  hoverColor: Colors.transparent,
+                  onTap: () => setState(() => _open = !_open),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.code_rounded,
+                          size: 16,
+                          color: lit ? widget.accent : AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: AnimatedDefaultTextStyle(
+                            duration: dur,
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: lit ? FontWeight.w600 : FontWeight.w500,
+                              color: lit
+                                  ? AppColors.textPrimary
+                                  : AppColors.textSecondary,
+                            ),
+                            child: const Text('Engineering details'),
+                          ),
+                        ),
+                        AnimatedRotation(
+                          turns: _open ? .5 : (_hover ? .08 : 0),
+                          duration: dur,
+                          child: Icon(
+                            Icons.expand_more_rounded,
+                            size: 20,
+                            color: lit
+                                ? widget.accent
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            AnimatedSize(
+              duration: dur,
+              curve: Curves.easeOut,
+              alignment: Alignment.topCenter,
+              child: _open
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (final t in widget.highlights)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                '• $t',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  height: 1.7,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(width: double.infinity),
             ),
           ],
         ),
