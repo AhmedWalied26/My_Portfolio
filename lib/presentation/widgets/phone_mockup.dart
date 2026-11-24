@@ -67,7 +67,7 @@ class PhoneMockup extends StatelessWidget {
           padding: EdgeInsets.all(bezel),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(screenRadius),
-            child: Column(
+            child: ColoredBox(color: _safeAreaColor, child: Column(
               children: [
                 SizedBox(
                   height: safeArea,
@@ -96,7 +96,7 @@ class PhoneMockup extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
+            )),
           ),
         ),
       ),
