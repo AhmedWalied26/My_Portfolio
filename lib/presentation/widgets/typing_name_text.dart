@@ -8,12 +8,19 @@ class TypingNameText extends StatefulWidget {
   final TextAlign textAlign;
   final Shader Function(Rect)? shaderCallback;
 
+  /// Optional trailing segment of [text] rendered in [suffixColor]
+  /// (for example an accent-colored last name).
+  final String? suffix;
+  final Color? suffixColor;
+
   const TypingNameText({
     super.key,
     required this.text,
     required this.style,
     this.textAlign = TextAlign.start,
     this.shaderCallback,
+    this.suffix,
+    this.suffixColor,
   });
 
   @override
@@ -167,10 +174,23 @@ class _TypingNameTextState extends State<TypingNameText>
     );
 
     Widget buildRich(String content, {bool isPlaceholder = false}) {
+      final suffix = widget.suffix;
+      final headLength =
+          suffix == null ? content.length : widget.text.length - suffix.length;
+      final typedHeadLength =
+          content.length < headLength ? content.length : headLength;
+      final hasTail = suffix != null && content.length > headLength;
       final textSpan = TextSpan(
         style: widget.style,
         children: [
-          TextSpan(text: content),
+          TextSpan(text: content.substring(0, typedHeadLength)),
+          if (hasTail)
+            TextSpan(
+              text: content.substring(headLength),
+              style: widget.suffixColor == null
+                  ? null
+                  : TextStyle(color: widget.suffixColor),
+            ),
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
             child: isPlaceholder
