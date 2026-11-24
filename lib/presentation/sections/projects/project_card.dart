@@ -18,17 +18,31 @@ class _ProjectCardState extends State<ProjectCard> {
   static const screens = {
     'Mazra3ty': [
       '1-mazra3ty-1',
-      '2-mazra3ty-2',
-      '3-mazra3ty-3',
-      '4-mazra3ty-4',
+      '1-26-mazra3ty-home',
+      '2-27-mazra3ty-collections',
+      '3-28-mazra3ty-outgoings',
+      '4-29-mazra3ty-history',
     ],
     'smart_empty_state': ['1-23-package-1', '2-24-package-2', '3-25-package-3'],
-    'E-Commerce App': ['8-ecommerce-1', '9-ecommerce-2'],
-    'Movie App': ['10-movies-1', '11-movies-2', '12-movies-3', '13-movies-4'],
-    'Evently': ['14-evently-1', '15-evently-2', '16-evently-3'],
+    'E-Commerce App': [
+      '8-ecommerce-1',
+      '5-30-ecommerce-home',
+      '6-31-ecommerce-products',
+    ],
+    'Movie App': [
+      '10-movies-1',
+      '7-32-movies-home',
+      '8-33-movies-search',
+      '9-34-movies-browse',
+    ],
+    'Evently': ['14-evently-1', '10-35-evently-home', '11-36-evently-favorites'],
     'News App': ['17-news-1', '18-news-2'],
     'Islami App': ['19-islami-1', '20-islami-2', '21-islami-3', '22-islami-4'],
   };
+
+  /// Projects whose gallery screens were captured with seeded demo data
+  /// rather than a live backend account.
+  static const demoDataProjects = {'Mazra3ty', 'Evently'};
 
   List<String> get _assets =>
       (screens[widget.project.title] ?? const <String>[])
@@ -66,12 +80,28 @@ class _ProjectCardState extends State<ProjectCard> {
               Positioned(
                 top: 12,
                 left: 24,
-                child: Text(
-                  '${widget.project.title} · ${assets.length} screens',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${widget.project.title} · ${assets.length} screens',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    if (demoDataProjects.contains(widget.project.title)) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Interior screens shown with demo data',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Positioned(
