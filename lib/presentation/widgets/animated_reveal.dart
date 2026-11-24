@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -34,10 +35,7 @@ class _AnimatedRevealState extends State<AnimatedReveal>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
@@ -51,10 +49,7 @@ class _AnimatedRevealState extends State<AnimatedReveal>
     _slideAnimation = Tween<Offset>(
       begin: begin,
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_hasTriggered) {
@@ -133,12 +128,10 @@ class _AnimatedRevealState extends State<AnimatedReveal>
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.disableAnimationsOf(context)) return widget.child;
     return FadeTransition(
       opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: widget.child,
-      ),
+      child: SlideTransition(position: _slideAnimation, child: widget.child),
     );
   }
 }

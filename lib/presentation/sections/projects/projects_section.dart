@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../data/models/portfolio_models.dart';
@@ -129,63 +130,56 @@ class _ProjectsSectionState extends State<ProjectsSection> {
   }
 
   Widget _buildFilterChips() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(_filters.length, (index) {
-          final isSelected = _selectedFilterIndex == index;
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8,
+      runSpacing: 12,
+      children: List.generate(_filters.length, (index) {
+        final isSelected = _selectedFilterIndex == index;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: InkWell(
-              onTap: () {
-                setState(() => _selectedFilterIndex = index);
-              },
-              borderRadius: BorderRadius.circular(24),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 9,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: InkWell(
+            onTap: () {
+              setState(() => _selectedFilterIndex = index);
+            },
+            borderRadius: BorderRadius.circular(24),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.surfaceVariant.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : AppColors.border,
+                  width: 1,
                 ),
-                decoration: BoxDecoration(
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.35),
+                          blurRadius: 12,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Text(
+                _filters[index],
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected
-                      ? AppColors.primary
-                      : AppColors.surfaceVariant.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.border,
-                    width: 1,
-                  ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.35),
-                            blurRadius: 12,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Text(
-                  _filters[index],
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected
-                        ? const Color(0xFF0A0E17)
-                        : AppColors.textSecondary,
-                  ),
+                      ? const Color(0xFF0A0E17)
+                      : AppColors.textSecondary,
                 ),
               ),
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 }

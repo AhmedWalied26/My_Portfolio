@@ -32,11 +32,12 @@ class _AmbientBackgroundState extends State<AmbientBackground>
 
   @override
   Widget build(BuildContext context) {
+    final animate = !MediaQuery.disableAnimationsOf(context) && MediaQuery.sizeOf(context).width >= 900;
     return Stack(
       children: [
         Container(color: AppColors.background),
         Positioned.fill(
-          child: AnimatedBuilder(
+          child: !animate ? CustomPaint(painter: _AmbientGlowPainter(animationValue: 0)) : AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
               return CustomPaint(

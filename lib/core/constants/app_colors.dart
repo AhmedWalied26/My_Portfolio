@@ -19,8 +19,8 @@ class AppColors {
   static const Color borderActive = Color(0x6600D2FF);
 
   static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textSecondary = Color(0xFF94A3B8);
-  static const Color textMuted = Color(0xFF64748B);
+  static const Color textSecondary = Color(0xFFB1BFD2);
+  static const Color textMuted = Color(0xFF93A5BC);
 
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [Color(0xFF00D2FF), Color(0xFF3B82F6)],

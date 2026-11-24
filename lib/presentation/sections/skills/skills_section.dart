@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../data/models/portfolio_models.dart';
@@ -45,39 +46,31 @@ class SkillsSection extends StatelessWidget {
       builder: (context, constraints) {
         final categories = PortfolioData.skillCategories;
 
-        if (constraints.maxWidth >= 1024) {
-          // 3-column balanced compact layout
-          final col1 = [categories[0], categories[1]]; // Languages (3), Frameworks (2)
-          final col2 = [categories[2], categories[4]]; // Architecture (5), AI (4)
-          final col3 = [categories[3], categories[5]]; // Data (4), Other (4)
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: _buildColumn(col1, startIndex: 0)),
-              const SizedBox(width: 20),
-              Expanded(child: _buildColumn(col2, startIndex: 2)),
-              const SizedBox(width: 20),
-              Expanded(child: _buildColumn(col3, startIndex: 4)),
-            ],
-          );
-        } else if (constraints.maxWidth >= 640) {
-          // 2-column balanced layout
-          final col1 = [categories[0], categories[1], categories[2]];
-          final col2 = [categories[3], categories[4], categories[5]];
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: _buildColumn(col1, startIndex: 0)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildColumn(col2, startIndex: 3)),
-            ],
-          );
-        } else {
-          // Single column mobile layout
-          return _buildColumn(categories, startIndex: 0);
-        }
+        final columns = constraints.maxWidth >= 1000
+            ? 3
+            : constraints.maxWidth >= 640
+            ? 2
+            : 1;
+        final width = (constraints.maxWidth - (columns - 1) * 20) / columns;
+        return Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          children: List.generate(
+            categories.length,
+            (index) => SizedBox(
+              width: width,
+              child: AnimatedReveal(
+                delay: Duration(milliseconds: 40 * (index % 3)),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: columns == 1 ? 0 : 235,
+                  ),
+                  child: _CompactCategoryCard(category: categories[index]),
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
   }
@@ -126,11 +119,7 @@ class _CompactCategoryCard extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                child: Icon(
-                  category.icon,
-                  size: 17,
-                  color: category.color,
-                ),
+                child: Icon(category.icon, size: 17, color: category.color),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -169,10 +158,12 @@ class _CompactCategoryCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: category.skills
-                .map((skill) => _CompactSkillChip(
-                      label: skill,
-                      accentColor: category.color,
-                    ))
+                .map(
+                  (skill) => _CompactSkillChip(
+                    label: skill,
+                    accentColor: category.color,
+                  ),
+                )
                 .toList(),
           ),
         ],
@@ -185,10 +176,7 @@ class _CompactSkillChip extends StatefulWidget {
   final String label;
   final Color accentColor;
 
-  const _CompactSkillChip({
-    required this.label,
-    required this.accentColor,
-  });
+  const _CompactSkillChip({required this.label, required this.accentColor});
 
   @override
   State<_CompactSkillChip> createState() => _CompactSkillChipState();
@@ -244,7 +232,9 @@ class _CompactSkillChipState extends State<_CompactSkillChip> {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
-                color: _isHovered ? AppColors.textPrimary : AppColors.textSecondary,
+                color: _isHovered
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
               ),
             ),
           ],
